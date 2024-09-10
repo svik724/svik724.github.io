@@ -73,8 +73,10 @@ def gaussian_pyramid_alg(to_shift, anchor, level):
 # ['emir.tif', 'monastery.jpg', 'church.tif', 'three_generations.tif', 'melons.tif', 'onion_church.tif', 
 # 'train.tif', 'tobolsk.jpg', 'icon.tif', 'cathedral.jpg', 'self_portrait.tif', 'harvesters.tif', 'sculpture.tif', 'lady.tif']
 
-for img in listdir('../media'):
-    imname = '../media/' + img
+# for img in listdir('../media'):
+for img in ["svik724.github.io/1/extra1.tif", "svik724.github.io/1/extra2.tif"]:
+    #imname = '../media/' + img
+    imname = img
     im = skio.imread(imname)
     im = sk.img_as_float(im)
         
