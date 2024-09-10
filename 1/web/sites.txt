@@ -1,3 +1,2 @@
-1. Webpage report URL: svik724.github.io
+1. Webpage report URL: https://svik724.github.io/1/web/
 2. GitHub repo URL: https://github.com/svik724/svik724.github.io.git
-
