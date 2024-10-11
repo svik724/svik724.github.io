@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Project 3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        section {
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #333;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            margin-top: 25px;
+        }
+
+        .text-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .image-gallery {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .image-gallery figure {
+            display: inline-block;
+            text-align: center;
+            margin: 0 10px;
+        }
+
+        .image-gallery img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        figcaption {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .image-gallery {
+                flex-direction: column;
+            }
+
+            .image-gallery figure {
+                margin-bottom: 20px;
+            }
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Saatvik Billa CS180 Project 3: Face Morphing</h1>
+
+        <section>
+            <h2>Part 1: Defining Correspondences</h2>
+            <div class="text-box">
+                <p>In this section, I created a triangulation that both images could work with, which consists of a set of points
+                    that are connected in the same way between both images. I used the tool created by a former student to select
+                    points that are consistent, and then I used the Delaunay class from the scipy.spatial package to actually 
+                    create the set of triangles.
+                    <br>
+                    <br>
+                    The images shown below are the original ones overlaid with the triangulation. It's important to mark each of the
+                    four corners so that you can grab the pixels that are not on the face. Otherwise in future steps when you're morphing,
+                    all the pixels around will turn black.
+                </p>
+            </div>
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/jay_z.jpg" alt="Image 1">
+                    <figcaption>Original Jay-Z Picture</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/jay_z_triangulation_original.jpg" alt="Image 2">
+                    <figcaption>Jay-Z with Triangulation</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/kobe.jpg" alt="Image 3">
+                    <figcaption>Original Kobe Picture</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/kobe_triangulation_original.jpg" alt="Image 3">
+                    <figcaption>Kobe with Triangulation</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section>
+            <h2>Part 2: Computing the "Mid-way Face"</h2>
+            <div class="text-box">
+                <p>In order to compute the mid-way face, I had to basically warp each of the images such that they line up 
+                    with the triangulation that we computed in the first part. To be more specific, this triangulation was calculated
+                    by taking the midpoint between each correspondence point between both images, so right out of the box, it wasn't 
+                    going to line up with each individual image, hence the necessity to warp.
+                    <br>
+                    <br>
+                    In order to do this, for each image, I looked at the set of triangles, which are nothing but a list of three correspondence
+                    points. I looked at the coordinates in the original image, the ones computed by the average, and I defined an affine transformation
+                    matrix that would take me from the latter to the former. After I got this matrix, I then defined a mask using the polygon
+                    function from the skimage.draw package get a list of all the coordinates in the image that were inside of the triangle.
+                    From there, I applied this affine transformation to each of the coordinates, got those pixel values, and placed them at the
+                    corresponding place in the newly warped image. That's how I got the warped image for each individual. 
+                    <br>
+                    <br>
+                    For the completely averaged midway-face, all I did was take the numpy arrays representing both of the warped images 
+                    and average them out. I used nearest neighbor interpolation by casting the pixel values calculated by the matrix to ints.
+
+                </p>
+            </div>
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/jay_z_midway_face.jpg" alt="Image 4">
+                    <figcaption>Jay-Z Mid-Way Face</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/kobe_midway_face.jpg" alt="Image 5">
+                    <figcaption>Kobe Mid-Way Face</figcaption>
+                </figure>
+            </div>
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/jay_z_kobe_midway_face.jpg" alt="Image 4">
+                    <figcaption>Kobe and Jay-Z Averaged Mid-Way Face</figcaption>
+                </figure>
+            </div>
+
+            <div class="text-box" style="margin-top: 20px;">
+                <p>Another Example:</p>
+            </div>
+
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/cooper.jpg" alt="Image 4">
+                    <figcaption>Bradley Cooper Original Face</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/cooper_midway_face.jpg" alt="Image 4">
+                    <figcaption>Bradley Cooper Mid-Way Face</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/clooney.jpg" alt="Image 4">
+                    <figcaption>George Clooney Original Face</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/clooney_midway_face.jpg" alt="Image 5">
+                    <figcaption>George Clooney Mid-Way Face</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/cooper_clooney_midway_face.jpg" alt="Image 4">
+                    <figcaption>Clooney and Cooper Averaged Mid-Way Face</figcaption>
+                </figure>
+            </div>
+
+        </section>
+
+        <section>
+            <h2>Part 3: The Morph Sequence</h2>
+            <div class="text-box">
+                <p>This part was pretty easy since I did Part 2 successfully. All I had to do was create a bunch of frames
+                    and then stitch them together. A frame is nothing but a linear combination of both of the images instead of
+                    an even average. For this specific GIF, I used 240 frames, so it started out with using only 1/240th of the
+                    first image but ending up using 1/240th of the last image. I set my frames per second to be default 30 frames
+                    per second.
+                </p>
+            </div>
+            <div class="image-gallery">
+                <figure>
+                    <img id="myGif" src="../media/results/morphed_gif.gif" alt="Image 4">
+                    <figcaption>GIF showing morph from George Clooney to Bradley Cooper</figcaption>
+                </figure>
+            </div>
+        
+            <button onclick="resetGif()">Reset GIF</button>
+        
+        </section>
+
+        <section>
+            <h2>Part 4: The "Mean face" of a population</h2>
+            <div class="text-box">
+                <p>Very similar once again to Part 2. Instead of averaging over 2 people now, I averaged over 4 and created
+                    the triangulation off of that. Then using the same functions as before, I warped each individual to the 
+                    population average and morphed them all together.
+                </p>
+            </div>
+
+            <h3>Original Pictures of White Men</h3>
+
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/16-1m.jpg" alt="Image 4">
+                    <figcaption>White Man #1</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/25-1m.jpg" alt="Image 5">
+                    <figcaption>White Man #2</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/33-1m.jpg" alt="Image 6">
+                    <figcaption>White Man #3</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/36-1m.jpg" alt="Image 6">
+                    <figcaption>White Man #4</figcaption>
+                </figure>
+            </div>
+
+            <h3>White Men Individually Morphed Into Average</h3>
+
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/morphed_white_man1.jpg" alt="Image 4">
+                    <figcaption>Morphed White Man #1</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/morphed_white_man2.jpg" alt="Image 5">
+                    <figcaption>Morphed White Man #2</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/morphed_white_man3.jpg" alt="Image 6">
+                    <figcaption>Morphed White Man #3</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/morphed_white_man4.jpg" alt="Image 6">
+                    <figcaption>Morphed White Man #4</figcaption>
+                </figure>
+            </div>
+
+            <h3>All White Men Morphed Together</h3>
+            
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/white_man_overall_avg.jpg" alt="Image 4">
+                    <figcaption>Subset of Population Average</figcaption>
+                </figure>
+            </div>
+
+            <h3>Warping My Face With White Men Average</h3>
+
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/saatvik_ss.jpg" alt="Image 4">
+                    <figcaption>My face</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/saatvik_to_average.jpg" alt="Image 5">
+                    <figcaption>My face warped to white man average</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/average_to_saatvik.jpg" alt="Image 6">
+                    <figcaption>White man average warped to my face</figcaption>
+                </figure>
+            </div>
+
+        </section>
+
+        <section>
+            <h2>Part 5: Caricatures: Extrapolating from the mean</h2>
+            <div class="text-box">
+                <p>Here, all I had to do was use the morph function I defined in Part 5, except play around with the
+                    warp_frac value a little bit, which basically controls how much of the difference between my face and 
+                    the white man average face am I adding to my facial features. In the first picture, I am adding 1.5 times the
+                    white man features, and in the second one, I am actually subtracting 1.5 times the features. 
+                </p>
+            </div>
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/caricature_1.5.jpg" alt="Image 4">
+                    <figcaption>warp_frac = 1.5</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/caricature_neg_1.5.jpg" alt="Image 5">
+                    <figcaption>warp_frac = -1.5</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section>
+            <h2>Part 6: Bells and Whistles</h2>
+            <div class="text-box">
+                <p>I aimed to change both the gender and ethnicity of myself, so I took the average chinese woman's face
+                    and experimented with how I looked when I cross-dissolved with only her colors, warped to her triangulation, 
+                    and finally morphed with her properly. I'd say I look pretty good! 
+                </p>
+            </div>
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/saatvik_ss.jpg" alt="Image 4">
+                    <figcaption>My Face</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/avg_chinese_woman.jpg" alt="Image 5">
+                    <figcaption>Average Chinese Woman's Face</figcaption>
+                </figure>
+            </div>
+
+            <div class="image-gallery">
+                <figure>
+                    <img src="../media/results/saatvik_chinese_colors.jpg" alt="Image 4">
+                    <figcaption>My Face with her colors</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/saatvik_chinese_shape.jpg" alt="Image 5">
+                    <figcaption>My Face with her shape</figcaption>
+                </figure>
+                <figure>
+                    <img src="../media/results/saatvik_chinese_morph.jpg" alt="Image 5">
+                    <figcaption>Our faces completely morphed. Aren't I sexy?</figcaption>
+                </figure>
+            </div>
+
+        </section>
+
+    </div>
+
+    <script>
+        function resetGif() {
+            var img = document.getElementById("myGif");
+            var src = img.src;
+            img.src = ''; // Temporarily remove the src
+            img.src = src; // Reassign the original src to reload the GIF
+        }
+    </script>
+    
+</body>
+</html>
