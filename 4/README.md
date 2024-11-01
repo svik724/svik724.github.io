@@ -1,0 +1,3 @@
+Running the notebook is pretty straightforward -- just run everything in order :). There are markdown cells throughout the notebook that let you know where you are in the project!
+
+If you want a fast way to run the auto-stitching algorithm, the very last cell of the notebook as all the steps compiled into one function called auto_mosaic! I already set up the cells at the bottom to run for each of the mosaics, all you have to do is run them -- they should take about 3-3.5 mins to run.
