@@ -1,0 +1,1 @@
+There are two jupyter notebooks, one for 5A and one for 5B. Just run all the cells in order to get your results.
