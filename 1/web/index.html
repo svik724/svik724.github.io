@@ -3,181 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
+    <title>Colorizing the Prokudin-Gorskii photos</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #fafbfc;
+            color: #222;
             margin: 0;
-            padding: 20px;
+            line-height: 1.7;
         }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .gallery-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+        header {
+            display: flex;
             justify-content: center;
+            align-items: center;
+            padding: 2rem 0 1rem 0;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-
-        .gallery-item {
+        .hero {
             position: relative;
-            overflow: hidden;
-            border-radius: 8px;
+            margin: 2rem auto 2rem auto;
+            max-width: 900px;
+            text-align: left;
         }
-
+        .hero-title {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            color: #fff;
+            background: rgba(0,0,0,0.4);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            max-width: 80%;
+        }
+        .hero img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            padding: 2.5rem 2rem;
+        }
+        h1, h2 {
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        p {
+            margin-bottom: 1.5rem;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 2rem 0;
+        }
+        .gallery-item {
+            background: #f5f5f5;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .gallery-item img {
             width: 100%;
             height: auto;
-            border-radius: 8px;
+            border-radius: 12px 12px 0 0;
+            transition: transform 0.3s;
         }
-
         .gallery-item:hover img {
-            transform: scale(1.05);
-            transition: all 0.3s ease;
+            transform: scale(1.04);
         }
-
         .caption {
-            position: absolute;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.7);
             color: #fff;
             width: 100%;
             text-align: center;
-            padding: 10px;
-            font-size: 14px;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+            padding: 0.7rem 0.5rem;
+            font-size: 0.98rem;
+            border-radius: 0 0 12px 12px;
         }
-
-        @media (max-width: 768px) {
-            .gallery-container {
+        @media (max-width: 900px) {
+            .gallery {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-
-        @media (max-width: 480px) {
-            .gallery-container {
+        @media (max-width: 600px) {
+            main, .hero {
+                padding: 1rem 0.5rem;
+            }
+            .gallery {
                 grid-template-columns: 1fr;
+            }
+            .hero-title {
+                left: 1rem;
+                right: 1rem;
+                padding: 1rem;
+                max-width: 95%;
             }
         }
     </style>
 </head>
 <body>
-
-    <h1>Colorizing the Prokudin-Gorskii photos</h1>
-
-    <h2>Intro</h2>
-
-    <p>
-        The purpose of this project was to use photos from each of the RGB channels and align them to make a proper color photo.
-    </p>
-    
-    <h2>Approach</h2>
-
-    <p>
-        The crux of my code was centered around my align function, which basically treats the photo with the blue filter as the anchor
-        and tries to individually align the green and red filter photos with the anchor. I started with a displacement of [-30, -30] and
-        moved all the way to [30, 30], and during each displacement, or iteration, I used a function called structural_similarity from the
-        skimage.metrics library to calculate a metric that measures how similar the anchor is to the image being shifted. How the package actually
-        works was beyond the scope of our understanding at the time when the project was assigned, but it was approved by the course staff.
-
-        For the smaller jpg images, calling this align function one time for both the green and red filter photos was enough to have it align, 
-        but for the bigger tif images, we had to implement something called a gaussian pyramid, which basically takes an image and repeatedly makes
-        it more coarse till it reaches a small enough size that I could then call this align function on and have it run optimally. I reduced the image
-        four times, each time making it half the size, so when my align function returned the optimal shift at the coarsest level, I just kept multiplying
-        that shift by 2 for four iterations. I think used this final shift to align the big images and get my color photo.
-
-        Even after implementing this pyramid, there were some images like melons.tif and self_portrait.tif that wouldn't align accurately, so I ended up
-        cropping the image at the coarsest level by 15% on each of its sides to eradicate any non-overlapping pixels and then I built the image back up, 
-        at which point I aligned it. This seemed to work on all the images and I didn't have any problems at the end.
-    </p>
-    
-    <h2>Images</h2>
-
-    <p>
-        The following images are from the artist's collection, and this is how they look once aligned. As you can see, there are weird bars around
-        the edges for most of them, showing that there needed to be some displacement/alignment in order to reconstruct the image properly. For each
-        image, there are two shifts noted, one for the green-filter image and one for the red-filter image. The units are pixels, so the shifts tell
-        you how many pixels those specific images had to be moved by.
-    </p>
-
-    <div class="gallery-container">
-        <div class="gallery-item">
-            <img src="../media/emir.jpg" alt="emir">
-            <div class="caption">Shift: green:  [48 24]  red:  [104  40]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/monastery.jpg" alt="monastery">
-            <div class="caption">Shift: green:  [-3 2]  red:  [3 2]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/church.jpg" alt="church">
-            <div class="caption">Shift: green:  [24  0]  red:  [56 -8]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/three_generations.jpg" alt="three_generations">
-            <div class="caption">Shift: green:  [56 16]  red:  [112   8]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/melons.jpg" alt="melons">
-            <div class="caption">Shift: green:  [80  8]  red:  [176  16]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/onion_church.jpg" alt="onion_church">
-            <div class="caption">Shift: green:  [56 24]  red:  [112  32]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/train.jpg" alt="train">
-            <div class="caption">Shift: green:  [48  0]  red:  [88 32]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/tobolsk.jpg" alt="tobolsk">
-            <div class="caption">Shift: green:  [3 2]  red:  [6 3]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/icon.jpg" alt="icon">
-            <div class="caption">Shift: green:  [40 16]  red:  [88 24]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/cathedral.jpg" alt="cathedral">
-            <div class="caption">Shift: green:  [5 2]  red:  [12 3]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/self_portrait.jpg" alt="self_portrait">
-            <div class="caption">Shift: green:  [80 32]  red:  [176  40]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/harvesters.jpg" alt="harvesters">
-            <div class="caption">Shift: green:  green:  [56 16]  red:  [120  16]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/sculpture.jpg" alt="sculpture">
-            <div class="caption">Shift: green:  [32 -8]  red:  [136 -24]</div>
-        </div>
-        <div class="gallery-item">
-            <img src="../media/lady.jpg" alt="lady">
-            <div class="caption">Shift: green:  [56  0]  red:  [120  8]</div>
+    <header>
+        <div style="font-weight:700;font-size:1.3rem;">Colorizing the Prokudin-Gorskii photos</div>
+    </header>
+    <div class="hero">
+        <img src="../media/cathedral.jpg" alt="cathedral main">
+        <div class="hero-title">
+            <h1>Colorizing the Prokudin-Gorskii photos</h1>
+            <p>The purpose of this project was to use photos from each of the RGB channels and align them to make a proper color photo.</p>
         </div>
     </div>
+    <main>
+        <h2>Intro</h2>
+        <p>The purpose of this project was to use photos from each of the RGB channels and align them to make a proper color photo.</p>
+        <h2>Approach</h2>
+        <p>The crux of my code was centered around my align function, which basically treats the photo with the blue filter as the anchor
+            and tries to individually align the green and red filter photos with the anchor. I started with a displacement of [-30, -30] and
+            moved all the way to [30, 30], and during each displacement, or iteration, I used a function called structural_similarity from the
+            skimage.metrics library to calculate a metric that measures how similar the anchor is to the image being shifted. How the package actually
+            works was beyond the scope of our understanding at the time when the project was assigned, but it was approved by the course staff.
 
-    <h2>Extra Images</h2>
+            For the smaller jpg images, calling this align function one time for both the green and red filter photos was enough to have it align, 
+            but for the bigger tif images, we had to implement something called a gaussian pyramid, which basically takes an image and repeatedly makes
+            it more coarse till it reaches a small enough size that I could then call this align function on and have it run optimally. I reduced the image
+            four times, each time making it half the size, so when my align function returned the optimal shift at the coarsest level, I just kept multiplying
+            that shift by 2 for four iterations. I think used this final shift to align the big images and get my color photo.
 
-    <div class="gallery-container">
-        <div class="gallery-item">
-            <img src="../media/prod1.jpg" alt="extra1">
-            <div class="caption">Shift: green:  [56 32]  red:  [128 48]</div>
+            Even after implementing this pyramid, there were some images like melons.tif and self_portrait.tif that wouldn't align accurately, so I ended up
+            cropping the image at the coarsest level by 15% on each of its sides to eradicate any non-overlapping pixels and then I built the image back up, 
+            at which point I aligned it. This seemed to work on all the images and I didn't have any problems at the end.
+        </p>
+        <h2>Images</h2>
+        <p>The following images are from the artist's collection, and this is how they look once aligned. As you can see, there are weird bars around
+            the edges for most of them, showing that there needed to be some displacement/alignment in order to reconstruct the image properly. For each
+            image, there are two shifts noted, one for the green-filter image and one for the red-filter image. The units are pixels, so the shifts tell
+            you how many pixels those specific images had to be moved by.</p>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="../media/emir.jpg" alt="emir">
+                <div class="caption">Shift: green:  [48 24]  red:  [104  40]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/monastery.jpg" alt="monastery">
+                <div class="caption">Shift: green:  [-3 2]  red:  [3 2]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/church.jpg" alt="church">
+                <div class="caption">Shift: green:  [24  0]  red:  [56 -8]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/three_generations.jpg" alt="three_generations">
+                <div class="caption">Shift: green:  [56 16]  red:  [112   8]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/melons.jpg" alt="melons">
+                <div class="caption">Shift: green:  [80  8]  red:  [176  16]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/onion_church.jpg" alt="onion_church">
+                <div class="caption">Shift: green:  [56 24]  red:  [112  32]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/train.jpg" alt="train">
+                <div class="caption">Shift: green:  [48  0]  red:  [88 32]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/tobolsk.jpg" alt="tobolsk">
+                <div class="caption">Shift: green:  [3 2]  red:  [6 3]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/icon.jpg" alt="icon">
+                <div class="caption">Shift: green:  [40 16]  red:  [88 24]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/cathedral.jpg" alt="cathedral">
+                <div class="caption">Shift: green:  [5 2]  red:  [12 3]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/self_portrait.jpg" alt="self_portrait">
+                <div class="caption">Shift: green:  [80 32]  red:  [176  40]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/harvesters.jpg" alt="harvesters">
+                <div class="caption">Shift: green:  green:  [56 16]  red:  [120  16]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/sculpture.jpg" alt="sculpture">
+                <div class="caption">Shift: green:  [32 -8]  red:  [136 -24]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/lady.jpg" alt="lady">
+                <div class="caption">Shift: green:  [56  0]  red:  [120  8]</div>
+            </div>
         </div>
-        <div class="gallery-item">
-            <img src="../media/prod2.jpg" alt="extra2">
-            <div class="caption">Shift: green:  [48 40]  red:  [112 56]</div>
+        <h2>Extra Images</h2>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="../media/prod1.jpg" alt="extra1">
+                <div class="caption">Shift: green:  [56 32]  red:  [128 48]</div>
+            </div>
+            <div class="gallery-item">
+                <img src="../media/prod2.jpg" alt="extra2">
+                <div class="caption">Shift: green:  [48 40]  red:  [112 56]</div>
+            </div>
         </div>
-    </div>
-
-
+    </main>
 </body>
 </html>

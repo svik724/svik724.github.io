@@ -3,207 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
+    <title>Fun with Filters and Frequencies!</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #fafbfc;
+            color: #222;
             margin: 0;
-            padding: 20px;
+            line-height: 1.7;
         }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .gallery-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+        header {
+            display: flex;
             justify-content: center;
+            align-items: center;
+            padding: 2rem 0 1rem 0;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-
-        .gallery-item {
+        .hero {
             position: relative;
-            overflow: hidden;
-            border-radius: 8px;
+            margin: 2rem auto 2rem auto;
+            max-width: 900px;
+            text-align: left;
         }
-
+        .hero-title {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            color: #fff;
+            background: rgba(0,0,0,0.4);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            max-width: 80%;
+        }
+        .hero img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            padding: 2.5rem 2rem;
+        }
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        p {
+            margin-bottom: 1.5rem;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 2rem 0;
+        }
+        .gallery-item {
+            background: #f5f5f5;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .gallery-item img {
             width: 100%;
             height: auto;
-            border-radius: 8px;
+            border-radius: 12px 12px 0 0;
+            transition: transform 0.3s;
         }
-
         .gallery-item:hover img {
-            transform: scale(1.05);
-            transition: all 0.3s ease;
+            transform: scale(1.04);
         }
-
         .caption {
-            position: absolute;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.7);
             color: #fff;
             width: 100%;
             text-align: center;
-            padding: 10px;
-            font-size: 14px;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+            padding: 0.7rem 0.5rem;
+            font-size: 0.98rem;
+            border-radius: 0 0 12px 12px;
         }
-
-        @media (max-width: 768px) {
-            .gallery-container {
+        .img-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 1.5rem 0;
+            justify-content: flex-start;
+        }
+        .img-row img {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 0.5rem;
+            max-width: 100%;
+            height: auto;
+        }
+        @media (max-width: 900px) {
+            .gallery {
                 grid-template-columns: repeat(2, 1fr);
             }
+            .img-row {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
-
-        @media (max-width: 480px) {
-            .gallery-container {
+        @media (max-width: 600px) {
+            main, .hero {
+                padding: 1rem 0.5rem;
+            }
+            .gallery {
                 grid-template-columns: 1fr;
+            }
+            .hero-title {
+                left: 1rem;
+                right: 1rem;
+                padding: 1rem;
+                max-width: 95%;
+            }
+            .img-row {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
-
-    <h1>Fun with Filters and Frequencies!</h1>
-
-    <h2>Intro</h2>
-
-    <p>The purpose of this project was to make use of different types of filters and frequency techniques to manipulate images!</p>
-    
-    <h2>Part 1: Fun with Filters</h2>
-    
-    <h3>Part 1.1: Finite Difference Operator</h3>
-    
-    <h4>Approach</h4>
-
-    <p>The first two images, d/dx and d/dy show you the vertical and horizontal edges, respectively of the original cameraman. This just 
-        required a simple convolution with the vector [1, -1], reshaped in the appropriate format. To obtain the third image, I simply
-        utilized the matrices representing d/dx and d/dy and followed the formula from class to derive a matrix where each entry represented
-        the magnitude of the gradient at said point. This allowed for edges to be highlighted and for the user to see an outline of the cameraman. 
-        The fourth pic is a binarized version of the third, which meant that every entry value that was 2.9 (I chose) standard deviations above the
-        mean gradient magnitude value would be turned to 1, and everything else would be a 0. This allowed for finer edges to be exemplified and not so 
-        finer ones to disappear.
-    </p>
-
-    <img src="../media/results/finite_diff_operator.jpg" alt="finite_diff_operator" style="height: 350px; width: auto; display: inline-block;">
-
-    <h3>Part 1.2: Derivative of Gaussian Filter</h3>
-    
-    <h4>Approach</h4>
-
-    <p>For the first image, I convolved the 2D Gaussian w/ image first, and then took the x & y derivatives of said image. For the second image, 
-        took the x & y derivatives of the 2D Gaussian first and then convolved that with the image. The respective formulas are in the title of the
-        images, but as you can see, they yield the same response. There is a very minute small difference, but that is most likely due to how numpy
-        rounds numbers in calculations. When I looked at the difference matrix of both the image matrices, the values were all like some number times
-        10 to the power of -17/-18.
-    </p>
-
-    <p>
-        Compared to 1.1, the main difference that I see is that the edges are more defined in the final picture.
-    </p>
-    
-    <img src="../media/results/DoG_properties.jpg" alt="DoG_properties" style="height: 450px; width: auto; display: inline-block;">
-
-    <h2>Part 2: Fun with Frequencies</h2>
-
-    <h3>Part 2.1: Image "Sharpening"</h3>
-
-    <h4>Approach</h4>
-
-    <p>In class, we were taught that all sharpening an image entailed was exemplifying the high-frequencies in an image. In order to extract the high-frequencies
-        for these images, I first ran a gaussian blur convolution over the image to get a smoothed out version with only low-frequencies, and then I subtracted this
-        from the regular image to get a new matrix that represented the high-frequencies. Then I multiplied this new matrix by a factor alpha, which basically tells you
-        how sharp you want the image to be, and I added this to the original image to yield a new one that looks more sharp and defined.
-    </p>
-
-    <h4>Taj Mahal Picture</h4>
-    <img src="../media/taj.jpg" alt="taj" style="height: 300px; width: auto; display: inline-block;">
-    <img src="../media/results/taj_blurred.jpg" alt="taj_blurred" style="height: 300px; width: auto; display: inline-block;">
-    <img src="../media/results/sharpened_taj.jpg" alt="sharpened_taj" style="height: 300px; width: auto; display: inline-block;">
-
-    <h4>Extra Images</h4>
-    <img src="../media/results/extra_imgs_sharpened.jpg" alt="porsche_and_mansion" style="height: 250px; width: auto; display: inline-block;">
-
-    <h3>Part 2.2: Hybrid Images</h3>
-
-    <h4>Approach</h4>
-
-    <p>In this part, I first aligned the images using the starter code that the TAs provided. I had to edit my GUI backend settings a little bit
-        to get this to work, but once I did that, I was able to select two points for each image and then let those points define the alignment. 
-        I found that the best points to pick were the eyes.
-    </p>
-    <p>Once done aligning, I then ran the gaussian filter blur on both images, and for only the second image, I subtracted this blurred version
-        from the aligned image to extract the high-frequencies. When subtracting, I multiplied the blurred image matrix by 0.5 to allow for some low
-        frequencies to stay. I felt that this would allow for a smoother transition when the user is moving from farther to closer when looking at
-        they hybridized image. After my subtraction, I clipped values to a range of 0 to 255 to account for any negative values that may have come up. 
-    </p>
-
-    <h4>Derek and Nutmeg</h4>
-
-    <img src="../media/hybrid/DerekPicture.jpg" alt="derek" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/hybrid/nutmeg.jpg" alt="nutmeg" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/results/derek_nutmeg_hybrid.jpg" alt="derek_nutmeg_hybrid" style="height: 250px; width: auto; display: inline-block;">
-
-    <h4>Extra Images</h4>
-
-    <p>These are two beautiful males in my life.</p>
-
-    <img src="../media/hybrid/bhatia.png" alt="bhatia" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/hybrid/praneet.png" alt="praneet" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/results/bhatia_praneet_hybrid.jpg" alt="bhatia_praneet_hybrid" style="height: 250px; width: auto; display: inline-block;">
-
-    <p>And these are two beautiful females I wish were in my life. This one is not so great and probably needs more processing.</p>
-
-    <img src="../media/hybrid/jessica.jpg" alt="jessica" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/hybrid/deepika.jpeg" alt="deepika" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/results/jessica_deepika_hybrid.jpg" alt="jessica_deepika_hybrid" style="height: 250px; width: auto; display: inline-block;">
-
-    <h4>Frequency Analysis</h4>
-
-    <p>These are the visuals for the log magnitudes of the Fourier Transforms for my two friends.</p>
-    <img src="../media/results/frequency_analysis.jpg" alt="frequency_analysis" style="height: 300px; width: auto; display: inline-block;">
-
-    <h3>Part 2.3: Gaussian and Laplacian Stacks</h3>
-
-    <h4>Approach</h4>
-    
-    <p>In this part of the project, we were required to blend two images together using multiresolution blending. This entails creating a Laplacian
-        stack for each of the images, applying a gaussian-blur mask to the respective laplacians at each level, summing up all these post-processed laplacians, 
-        and then normalizing the final matrix to obtain a nicely-blended image. In order to get a Laplacian stack, you first have to create a Gaussian Stack for each
-        of the images, which is similar to a Gaussian Pyramid except you are keeping the same dimensionality all whilst blurring it. Then you create the Laplacian stack
-        by subtracting an image in the Gaussian stack at a level k+1 from the image in the same stack at level k. This new image matrix represents the high-frequency difference
-        between the two images.
-    </p>
-
-    <p>Here is my laplacian stack for the apple</p>
-    <img src="../media/results/laplacian_apple.jpg" alt="apple_laplacian" style="height: 250px; width: auto">
-
-    <p>Here is my laplacian stack for the orange</p>
-    <img src="../media/results/laplacian_orange.jpg" alt="orange_laplacian" style="height: 250px; width: auto">
-    
-    <h3>Part 2.4: Multiresolution Blending</h3>
-
-    <h4>Oraple</h4>
-
-    <p>Here is the final result from blending the two laplacian stacks from above!</p>
-    <img src="../media/results/oraple.jpg" alt="orange_laplacian" style="height: 250px; width: auto">
-
-    <h4>Extra Images</h4>
-
-    <p>I tried blending my two friends using the same technique.</p>
-    <img src="../media/hybrid/bhatia.png" alt="bhatia" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/hybrid/praneet.png" alt="praneet" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/results/bhatia_praneet_blended.jpg" alt="bhatia_praneet_blended" style="height: 250px; width: auto; display: inline-block;">
-
-    <p>I also implemented a circle mask for two of my other friends.</p>
-    <img src="../media/blending/alex.jpg" alt="alex" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/blending/shadt.jpg" alt="shadt" style="height: 250px; width: auto; display: inline-block;">
-    <img src="../media/results/alex_shadt_blended.jpg" alt="alex_shadt_blended" style="height: 250px; width: auto; display: inline-block;">
-
+    <header>
+        <div style="font-weight:700;font-size:1.3rem;">Fun with Filters and Frequencies!</div>
+    </header>
+    <div class="hero">
+        <img src="../media/results/finite_diff_operator.jpg" alt="finite_diff_operator main">
+        <div class="hero-title">
+            <h1>Fun with Filters and Frequencies!</h1>
+            <p>The purpose of this project was to make use of different types of filters and frequency techniques to manipulate images!</p>
+        </div>
+    </div>
+    <main>
+        <h2>Intro</h2>
+        <p>The purpose of this project was to make use of different types of filters and frequency techniques to manipulate images!</p>
+        <h2>Part 1: Fun with Filters</h2>
+        <h3>Part 1.1: Finite Difference Operator</h3>
+        <h4>Approach</h4>
+        <p>The first two images, d/dx and d/dy show you the vertical and horizontal edges, respectively of the original cameraman. This just 
+            required a simple convolution with the vector [1, -1], reshaped in the appropriate format. To obtain the third image, I simply
+            utilized the matrices representing d/dx and d/dy and followed the formula from class to derive a matrix where each entry represented
+            the magnitude of the gradient at said point. This allowed for edges to be highlighted and for the user to see an outline of the cameraman. 
+            The fourth pic is a binarized version of the third, which meant that every entry value that was 2.9 (I chose) standard deviations above the
+            mean gradient magnitude value would be turned to 1, and everything else would be a 0. This allowed for finer edges to be exemplified and not so 
+            finer ones to disappear.
+        </p>
+        <div class="img-row">
+            <img src="../media/results/finite_diff_operator.jpg" alt="finite_diff_operator" style="height: 350px; width: auto;">
+        </div>
+        <h3>Part 1.2: Derivative of Gaussian Filter</h3>
+        <h4>Approach</h4>
+        <p>For the first image, I convolved the 2D Gaussian w/ image first, and then took the x & y derivatives of said image. For the second image, 
+            took the x & y derivatives of the 2D Gaussian first and then convolved that with the image. The respective formulas are in the title of the
+            images, but as you can see, they yield the same response. There is a very minute small difference, but that is most likely due to how numpy
+            rounds numbers in calculations. When I looked at the difference matrix of both the image matrices, the values were all like some number times
+            10 to the power of -17/-18.
+        </p>
+        <p>
+            Compared to 1.1, the main difference that I see is that the edges are more defined in the final picture.
+        </p>
+        <div class="img-row">
+            <img src="../media/results/DoG_properties.jpg" alt="DoG_properties" style="height: 450px; width: auto;">
+        </div>
+        <h2>Part 2: Fun with Frequencies</h2>
+        <h3>Part 2.1: Image "Sharpening"</h3>
+        <h4>Approach</h4>
+        <p>In class, we were taught that all sharpening an image entailed was exemplifying the high-frequencies in an image. In order to extract the high-frequencies
+            for these images, I first ran a gaussian blur convolution over the image to get a smoothed out version with only low-frequencies, and then I subtracted this
+            from the regular image to get a new matrix that represented the high-frequencies. Then I multiplied this new matrix by a factor alpha, which basically tells you
+            how sharp you want the image to be, and I added this to the original image to yield a new one that looks more sharp and defined.
+        </p>
+        <h4>Taj Mahal Picture</h4>
+        <div class="img-row">
+            <img src="../media/taj.jpg" alt="taj" style="height: 300px; width: auto;">
+            <img src="../media/results/taj_blurred.jpg" alt="taj_blurred" style="height: 300px; width: auto;">
+            <img src="../media/results/sharpened_taj.jpg" alt="sharpened_taj" style="height: 300px; width: auto;">
+        </div>
+        <h4>Extra Images</h4>
+        <div class="img-row">
+            <img src="../media/results/extra_imgs_sharpened.jpg" alt="porsche_and_mansion" style="height: 250px; width: auto;">
+        </div>
+        <h3>Part 2.2: Hybrid Images</h3>
+        <h4>Approach</h4>
+        <p>In this part, I first aligned the images using the starter code that the TAs provided. I had to edit my GUI backend settings a little bit
+            to get this to work, but once I did that, I was able to select two points for each image and then let those points define the alignment. 
+            I found that the best points to pick were the eyes.
+        </p>
+        <p>Once done aligning, I then ran the gaussian filter blur on both images, and for only the second image, I subtracted this blurred version
+            from the aligned image to extract the high-frequencies. When subtracting, I multiplied the blurred image matrix by 0.5 to allow for some low
+            frequencies to stay. I felt that this would allow for a smoother transition when the user is moving from farther to closer when looking at
+            they hybridized image. After my subtraction, I clipped values to a range of 0 to 255 to account for any negative values that may have come up. 
+        </p>
+        <h4>Derek and Nutmeg</h4>
+        <div class="img-row">
+            <img src="../media/hybrid/DerekPicture.jpg" alt="derek" style="height: 250px; width: auto;">
+            <img src="../media/hybrid/nutmeg.jpg" alt="nutmeg" style="height: 250px; width: auto;">
+            <img src="../media/results/derek_nutmeg_hybrid.jpg" alt="derek_nutmeg_hybrid" style="height: 250px; width: auto;">
+        </div>
+        <h4>Extra Images</h4>
+        <p>These are two of my friends.</p>
+        <div class="img-row">
+            <img src="../media/hybrid/bhatia.png" alt="bhatia" style="height: 250px; width: auto;">
+            <img src="../media/hybrid/praneet.png" alt="praneet" style="height: 250px; width: auto;">
+            <img src="../media/results/bhatia_praneet_hybrid.jpg" alt="bhatia_praneet_hybrid" style="height: 250px; width: auto;">
+        </div>
+        <p>And these are two actresses. This one is not so great and probably needs more processing.</p>
+        <div class="img-row">
+            <img src="../media/hybrid/jessica.jpg" alt="jessica" style="height: 250px; width: auto;">
+            <img src="../media/hybrid/deepika.jpeg" alt="deepika" style="height: 250px; width: auto;">
+            <img src="../media/results/jessica_deepika_hybrid.jpg" alt="jessica_deepika_hybrid" style="height: 250px; width: auto;">
+        </div>
+        <h4>Frequency Analysis</h4>
+        <p>These are the visuals for the log magnitudes of the Fourier Transforms for my two friends.</p>
+        <div class="img-row">
+            <img src="../media/results/frequency_analysis.jpg" alt="frequency_analysis" style="height: 300px; width: auto;">
+        </div>
+        <h3>Part 2.3: Gaussian and Laplacian Stacks</h3>
+        <h4>Approach</h4>
+        <p>In this part of the project, we were required to blend two images together using multiresolution blending. This entails creating a Laplacian
+            stack for each of the images, applying a gaussian-blur mask to the respective laplacians at each level, summing up all these post-processed laplacians, 
+            and then normalizing the final matrix to obtain a nicely-blended image. In order to get a Laplacian stack, you first have to create a Gaussian Stack for each
+            of the images, which is similar to a Gaussian Pyramid except you are keeping the same dimensionality all whilst blurring it. Then you create the Laplacian stack
+            by subtracting an image in the Gaussian stack at a level k+1 from the image in the same stack at level k. This new image matrix represents the high-frequency difference
+            between the two images.
+        </p>
+        <p>Here is my laplacian stack for the apple</p>
+        <div class="img-row">
+            <img src="../media/results/laplacian_apple.jpg" alt="apple_laplacian" style="height: 250px; width: auto">
+        </div>
+        <p>Here is my laplacian stack for the orange</p>
+        <div class="img-row">
+            <img src="../media/results/laplacian_orange.jpg" alt="orange_laplacian" style="height: 250px; width: auto">
+        </div>
+        <h3>Part 2.4: Multiresolution Blending</h3>
+        <h4>Oraple</h4>
+        <p>Here is the final result from blending the two laplacian stacks from above!</p>
+        <div class="img-row">
+            <img src="../media/results/oraple.jpg" alt="orange_laplacian" style="height: 250px; width: auto">
+        </div>
+        <h4>Extra Images</h4>
+        <p>I tried blending my two friends using the same technique.</p>
+        <div class="img-row">
+            <img src="../media/hybrid/bhatia.png" alt="bhatia" style="height: 250px; width: auto;">
+            <img src="../media/hybrid/praneet.png" alt="praneet" style="height: 250px; width: auto;">
+            <img src="../media/results/bhatia_praneet_blended.jpg" alt="bhatia_praneet_blended" style="height: 250px; width: auto;">
+        </div>
+        <p>I also implemented a circle mask for two of my other friends.</p>
+        <div class="img-row">
+            <img src="../media/blending/alex.jpg" alt="alex" style="height: 250px; width: auto;">
+            <img src="../media/blending/shadt.jpg" alt="shadt" style="height: 250px; width: auto;">
+            <img src="../media/results/alex_shadt_blended.jpg" alt="alex_shadt_blended" style="height: 250px; width: auto;">
+        </div>
+    </main>
 </body>
 </html>

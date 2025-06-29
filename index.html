@@ -83,6 +83,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        min-height: 300px; /* Changed from fixed height to min-height */
     }
 
     .project-card:nth-child(even) {
@@ -90,37 +91,78 @@
     }
 
     .project-card:hover {
-        transform: scale(1.05); /* Slightly enlarges the card */
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhances the shadow for a pop-out effect */
+        transform: scale(1.02); /* Reduced scale for subtler effect */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
-    .project-card img {
-      width: 50%;
-      height: auto;
+    
+    .project-card img,
+    .project-card video {
+      width: 45%;
+      height: 260px; /* Fixed height for media */
+      object-fit: cover; /* Maintain aspect ratio while filling container */
       border-radius: 8px;
+      flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    /* Special styling for the GIF in project 3 */
+    #myGif {
+      object-fit: contain; /* Show entire GIF without cropping */
+      background-color: #f0f0f0; /* Light background for transparent GIFs */
+    }
+
+    /* Special styling for the video in project 6 */
+    .project-card video {
+      object-fit: contain; /* Show entire video without cropping */
+      background-color: #f0f0f0; /* Light background for videos */
+    }
+
+    /* Special styling for images in projects 1 and 2 */
+    .project-card img[src*="emir.jpg"],
+    .project-card img[src*="oraple.jpg"] {
+      object-fit: contain; /* Show entire image without cropping */
+      background-color: #f0f0f0; /* Light background for images */
+    }
+    
+    /* Special styling for images in projects 4 and 5 */
+    .project-card img[src*="living_room2_initial_corr.jpg"],
+    .project-card img[src*="unet_sample_epoch5.png"] {
+      object-fit: contain; /* Show entire image without cropping */
+      background-color: #f0f0f0; /* Light background for images */
     }
 
     .project-info {
       width: 50%;
       padding: 20px;
       text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Changed back to space-between */
+      min-height: 260px; /* Match the media height */
+      box-sizing: border-box;
     }
+    
     .project-info h2 {
       margin-bottom: 10px;
       font-size: 1.8rem;
       color: #333;
       line-height: 1.4;
+      flex-shrink: 0;
     }
 
     .project-info h2 span {
-      font-weight: 400; /* Optional: lighter font for the subtitle */
-      font-size: 1.4rem; /* Slightly smaller for subtitle */
+      font-weight: 400;
+      font-size: 1.4rem;
       color: #555;
     }
+    
     .project-info p {
       margin-bottom: 20px;
       font-size: 1rem;
       color: #555;
+      flex-grow: 1;
+      overflow: visible;
     }
+    
     .project-info button {
       padding: 10px 20px;
       font-size: 1rem;
@@ -130,9 +172,23 @@
       border-radius: 4px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      margin-right: 10px;
+      margin-bottom: 5px;
+      display: inline-block;
+      width: auto;
+      flex-shrink: 0;
+      align-self: flex-start;
     }
+    
     .project-info button:hover {
       background-color: #5757d1;
+    }
+
+    /* Container for buttons to keep them on the same line */
+    .button-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     /* Footer Section */
@@ -143,6 +199,27 @@
       border-top: 1px solid #ddd;
       font-size: 0.9rem;
       color: #777;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .project-card {
+        flex-direction: column !important;
+        height: auto;
+        min-height: 400px;
+      }
+      
+      .project-card img,
+      .project-card video {
+        width: 100%;
+        height: 200px;
+        margin-bottom: 20px;
+      }
+      
+      .project-info {
+        width: 100%;
+        padding: 0;
+      }
     }
   </style>
 </head>
@@ -156,50 +233,18 @@
   <!-- Projects Section -->
   <section class="project-section">
     <div class="project-card">
-      <img src="media/emir.jpg" alt="Project 1">
+      <video controls>
+        <source src="media/background_regular.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
       <div class="project-info">
-        <h2>Project 1<br>
-            <span>Colorizing the Prokudin-Gorskii photos</span>
+        <h2>Project 6<br>
+            <span>NeRFs</span>
         </h2>
-        <p>Aligned and colorized digitized Prokudin-Gorskii glass plate images using image processing techniques to produce vibrant 
-            RGB images with minimal visual artifacts.</p>
-        <button onclick="window.open('./1/web/index.html', '_blank')">View Project</button>
-      </div>
-    </div>
-    <div class="project-card">
-      <img src="media/oraple.jpg" alt="Project 2">
-      <div class="project-info">
-        <h2>Project 2<br>
-            <span>Filters and Frequencies</span>
-        </h2>
-        <p>Explored image processing techniques such as edge detection, image sharpening, hybrid image creation, and multiresolution blending. 
-            Applied advanced methods like Gaussian and Laplacian stacks to seamlessly blend images.</p>
-        <button onclick="window.open('./2/web/index.html', '_blank')">View Project</button>
-      </div>
-    </div>
-    <div class="project-card">
-      <img id="myGif" src="media/morphed_gif.gif" alt="Project 3">
-      <div class="project-info">
-        <h2>Project 3<br>
-            <span>Face Morphing</span>
-        </h2>
-        <p>Created a face morphing pipeline to generate smooth transitions between faces, compute the average face of a population, and produce 
-            caricatures by extrapolating from the population mean. This project combines shape warping and color blending to explore facial 
-            transformations and visual effects.</p>
-        <button onclick="window.open('./3/web/index.html', '_blank')">View Project</button>
-        <button onclick="resetGif()">Reset GIF</button>
-      </div>
-    </div>
-    <div class="project-card">
-      <img src="media/living_room2_initial_corr.jpg" alt="Project 4">
-      <div class="project-info">
-        <h2>Project 4<br>
-            <span>Image Warping + Mosaicing / Feature Matching for Autostitching</span>
-        </h2>
-        <p>Developed an image mosaicing pipeline involving image alignment, homography computation, and warping to seamlessly blend multiple 
-            images into cohesive mosaics. Enhanced with automated feature matching using Harris corners, feature descriptors, and RANSAC for 
-            robust stitching. Results include both manually and automatically stitched panoramas.</p>
-        <button onclick="window.open('./4/web/index.html', '_blank')">View Project</button>
+        <p>Implemented Neural Radiance Fields (NeRF) to reconstruct 2D and 3D representations of images and spaces. For 2D, optimized an MLP 
+            with sinusoidal positional encoding to fit image data. For 3D, extended to multi-view synthesis using ray sampling, volume rendering, 
+            and a modified MLP to predict densities and colors for 3D points.</p>
+        <button onclick="window.open('./final/web/index.html', '_blank')">View Project</button>
       </div>
     </div>
     <div class="project-card">
@@ -215,27 +260,59 @@
       </div>
     </div>
     <div class="project-card">
-    <figure>
-        <video controls width="320">
-            <source src="media/background_regular.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </figure>
+      <img src="media/living_room2_initial_corr.jpg" alt="Project 4">
       <div class="project-info">
-        <h2>Project 6<br>
-            <span>NeRFs</span>
+        <h2>Project 4<br>
+            <span>Image Warping + Mosaicing / Feature Matching for Autostitching</span>
         </h2>
-        <p>Implemented Neural Radiance Fields (NeRF) to reconstruct 2D and 3D representations of images and spaces. For 2D, optimized an MLP 
-            with sinusoidal positional encoding to fit image data. For 3D, extended to multi-view synthesis using ray sampling, volume rendering, 
-            and a modified MLP to predict densities and colors for 3D points.</p>
-        <button onclick="window.open('./final/web/index.html', '_blank')">View Project</button>
+        <p>Developed an image mosaicing pipeline involving image alignment, homography computation, and warping to seamlessly blend multiple 
+            images into cohesive mosaics. Enhanced with automated feature matching using Harris corners, feature descriptors, and RANSAC for 
+            robust stitching. Results include both manually and automatically stitched panoramas.</p>
+        <button onclick="window.open('./4/web/index.html', '_blank')">View Project</button>
+      </div>
+    </div>
+    <div class="project-card">
+      <img id="myGif" src="media/morphed_gif.gif" alt="Project 3">
+      <div class="project-info">
+        <h2>Project 3<br>
+            <span>Face Morphing</span>
+        </h2>
+        <p>Created a face morphing pipeline to generate smooth transitions between faces, compute the average face of a population, and produce 
+            caricatures by extrapolating from the population mean. This project combines shape warping and color blending to explore facial 
+            transformations and visual effects.</p>
+        <div class="button-container">
+          <button onclick="window.open('./3/web/index.html', '_blank')">View Project</button>
+          <button onclick="resetGif()">Reset GIF</button>
+        </div>
+      </div>
+    </div>
+    <div class="project-card">
+      <img src="media/oraple.jpg" alt="Project 2">
+      <div class="project-info">
+        <h2>Project 2<br>
+            <span>Filters and Frequencies</span>
+        </h2>
+        <p>Explored image processing techniques such as edge detection, image sharpening, hybrid image creation, and multiresolution blending. 
+            Applied advanced methods like Gaussian and Laplacian stacks to seamlessly blend images.</p>
+        <button onclick="window.open('./2/web/index.html', '_blank')">View Project</button>
+      </div>
+    </div>
+    <div class="project-card">
+      <img src="media/emir.jpg" alt="Project 1">
+      <div class="project-info">
+        <h2>Project 1<br>
+            <span>Colorizing the Prokudin-Gorskii photos</span>
+        </h2>
+        <p>Aligned and colorized digitized Prokudin-Gorskii glass plate images using image processing techniques to produce vibrant 
+            RGB images with minimal visual artifacts.</p>
+        <button onclick="window.open('./1/web/index.html', '_blank')">View Project</button>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    &copy; 2024 Saatvik Billa's Computer Vision Portfolio. All rights reserved.
+    &copy; 2025 Saatvik Billa's Computer Vision Portfolio. All rights reserved.
   </footer>
 
   <script>

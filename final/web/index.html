@@ -4,467 +4,422 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Project 6</title>
+    <title>Neural Radiance Fields</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #fafbfc;
+            color: #222;
+            margin: 0;
+            line-height: 1.7;
+        }
+        header {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            padding: 20px;
+            padding: 2rem 0 1rem 0;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-
-        .container {
+        .hero {
+            position: relative;
+            margin: 2rem auto 2rem auto;
             max-width: 900px;
+            text-align: left;
+        }
+        .hero-title {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            color: #fff;
+            background: rgba(0,0,0,0.4);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            max-width: 80%;
+        }
+        .hero img {
             width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        main {
+            max-width: 900px;
             margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            padding: 2.5rem 2rem;
         }
-
-        section {
-            margin-bottom: 50px;
-            text-align: center;
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
         }
-
         h1 {
-            font-size: 36px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 50px;
-            color: #333;
+            margin-top: 0;
         }
-
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
+        p {
+            margin-bottom: 1.5rem;
         }
-
-        h3 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            margin-top: 25px;
-        }
-
-        .text-box {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .image-gallery {
+        .gallery, .img-row, .image-gallery {
             display: flex;
-            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 1.5rem 0;
+            justify-content: flex-start;
         }
-
-        .image-gallery figure {
-            display: inline-block;
-            text-align: center;
-            margin: 0 10px;
-        }
-
-        .image-gallery img {
+        .gallery img, .img-row img, .image-gallery img {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 0.5rem;
             max-width: 100%;
             height: auto;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-
+        .image-gallery {
+            justify-content: flex-start;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .image-gallery figure {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px 10px 0;
+            flex: 1 1 180px;
+            min-width: 180px;
+            max-width: 220px;
+        }
         figcaption {
             margin-top: 10px;
-            font-size: 14px;
+            font-size: 0.98rem;
             color: #777;
+            text-align: center;
         }
-
-        @media (max-width: 768px) {
-            .image-gallery {
-                flex-direction: column;
-            }
-
-            .image-gallery figure {
-                margin-bottom: 20px;
-            }
+        .text-box {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.04);
+            margin-bottom: 30px;
         }
-
+        video {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            max-width: 100%;
+            height: auto;
+        }
         button {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #333;
+            background-color: #0077ff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: background 0.2s;
         }
-
         button:hover {
-            background-color: #555;
+            background-color: #005fcc;
         }
-
+        @media (max-width: 900px) {
+            .gallery, .img-row, .image-gallery {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .image-gallery figure {
+                margin: 0 0 20px 0;
+                min-width: 0;
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 600px) {
+            main, .hero {
+                padding: 1rem 0.5rem;
+            }
+            .hero-title {
+                left: 1rem;
+                right: 1rem;
+                padding: 1rem;
+                max-width: 95%;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <div class="container">
-
-        <h1>Neural Radiance Fields!</h1>
-
-        <section>
-            <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
-            <div class="text-box">
-                <p>
-                    For this project, I implemented an Multi-layer Perceptron (MLP) to reconstruct a 2D image using a neural network. I started by 
-                    building a positional encoding module, which transforms 2D image coordinates into a higher-dimensional representation using 
-                    sinusoidal functions. This is essential for capturing fine details and patterns in the image. The MLP was designed with 
-                    multiple hidden layers, activated by ReLU, and ending with a Sigmoid layer to predict RGB 
-                    pixel values. The MLP takes the positional encodings as input and learns to map coordinates to their corresponding pixel colors.
-                    <br>
-                    <br>
-                    To train the model, I created a custom dataset class that samples a batch of random pixel coordinates and their respective RGB 
-                    values at each iteration. For supervision, I normalized the pixel colors to the range [0, 1] and used Mean Squared Error (MSE) as the loss 
-                    function. The Adam optimizer was used for training, and I tracked performance using PSNR curve. 
-                    During training, I observed that the network progressively reconstructed the image as it optimized, confirming that the positional 
-                    encoding and MLP were effective in learning the 2D neural representation.
-                    <br>
-                    <br>
-                    As for varying hyperparameters, I found that when I increased the learning rate from 1e-5 to 1e-2, the image reconstruction 
-                    converged faster, and when I decreased the number of frequency levels from L=10 to L=5, the reconstruction took longer to reach
-                    a certain PSNR. 
-                </p>
-            </div>
-
-            <h3>Fox Image Progression</h3>
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_1.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_101.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_201.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_301.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_401.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_501.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_601.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_701.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_801.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/fox/epoch_901.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-            <h3>Bird Image Progression</h3>
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_1.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_101.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_201.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_301.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_401.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_501.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_601.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_701.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_801.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/epoch_901.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-            <h3>PSNRS</h3>
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part1_deliverable/fox/psnr_fox.png" alt="Image 1">
-                    <figcaption>Fox PSNR</figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part1_deliverable/bird/psnr_bird.png" alt="Image 1">
-                    <figcaption>Bird PSNR</figcaption>
-                </figure>
-            </div>
-
-            
-        </section>
-
-        <section>
-            <h2>
-                Part 2: Fit a Neural Radiance Field from Multi-view Images
-            </h2>
-        </section>
-
-        <section>
-            <h2>Part 2.1: Create Rays From Cameras</h2>
-            <div class="text-box">
-                <p>
-                    For this task, I implemented functions to generate rays from cameras, which is important for 
-                    implementing Neural Radiance Fields (NeRF). The process involves transforming points between the world space and the camera 
-                    space, converting pixel coordinates into camera coordinates, and finally calculating ray origins and directions.
-                    <br>
-                    <br>
-                    First, I created the transform function, which transforms points from the camera space to the world space using a camera-to-world 
-                    transformation matrix (c2w). This function supports batched inputs and ensures consistency by performing homogeneous 
-                    transformations and converting back to Cartesian coordinates. Next, the pixel_to_camera function converts 2D pixel coordinates 
-                    into 3D camera coordinates by applying the pinhole camera model using the intrinsic matrix K. This step allows us to project a 
-                    pixel in image space into a 3D point along a ray in camera space, with a fixed depth s.
-                    <br>
-                    <br>
-                    Finally, the pixel_to_ray function computes the ray origins and directions for each pixel. The origin of each ray is simply the 
-                    camera's position in world space, obtained by transforming the origin of the camera space (0, 0, 0). The ray direction is 
-                    computed by projecting a pixel into the world space using the transform and pixel_to_camera functions, and then normalizing 
-                    the vector pointing from the camera origin to this world-space point.
-                </p>
-            </div>
-            
-        </section>
-
-        <section>
-            <h2>
-                Part 2.2: Sampling
-            </h2>
-        </section>
-
-
-        <section>
-            <h2>Part 2.2.1: Sampling Rays From Images</h2>
-            <div class="text-box">
-                <p>
-                    Here, I implemented the sample_random_rays function to randomly sample rays from multiple training images. The 
-                    function selects N_rays rays by first sampling random image indices and then selecting random pixel coordinates (u, v) 
-                    within each image. To ensure accurate ray computation, a 0.5 offset is added to the pixel coordinates to account for the
-                    pixel center.
-                    <br>
-                    <br>
-                    Using the selected pixel coordinates and their corresponding camera-to-world transformation matrices (c2ws_train), the function 
-                    computes the ray origins and directions with the pixel_to_ray function. It also retrieves the RGB color values of the sampled 
-                    pixels from the training images. This approach efficiently generates ray data for training, allowing the model to optimize over 
-                    rays sampled from the entire dataset of images.
-                </p>
-            </div>
-            
-        </section>
-
-        <section>
-            <h2>Part 2.2.2: Sampling Points along Rays</h2>
-            <div class="text-box">
-                <p>
-                    To sample 3D points along rays, I implemented the sample_along_rays function. This function breaks each ray into N_samples 
-                    uniformly spaced points between a near and far range (default near=2.0, far=6.0). Using torch.linspace, I generate the initial 
-                    sample positions (t_vals) along each ray. To ensure all regions along the ray are visited during training, I introduce a small 
-                    random perturbation to these sample positions by shifting them within their respective intervals.
-                    <br>
-                    <br>
-                    The 3D coordinates of the sampled points are computed using the ray origin (rays_o) and direction (rays_d). By combining the 
-                    origins and directions with the perturbed t_vals, we create a set of 3D points that are distributed along each ray.
-                </p>
-            </div>
-            
-        </section>
-
-        <section>
-            <h2>Part 2.3: Putting the Dataloading all Together</h2>
-            <div class="text-box">
-                <p>
-                    For this part, I defined a dataloader to enable sampling of rays from multi-view images, incorporating camera 
-                    intrinsics and extrinsics. The dataloader randomly samples pixel coordinates from the training images and uses those coordinates 
-                    to generate ray origins and directions in 3D space. This is done by converting 2D pixel coordinates into camera coordinates and 
-                    then transforming them into world coordinates using the c2w matrix. The pixel colors corresponding to the sampled coordinates 
-                    are also retrieved to serve as ground truth supervision during training.
-                    <br>
-                    <br>
-                    To verify my implementation, I used the viser library to visualize the rays, cameras, and sampled 3D points. 
-                    First, I plotted the camera frustums for all training images, providing a clear view of their spatial layout. Then, I visualized 
-                    the sampled rays originating from the cameras and extending into the scene, ensuring they remained within the camera frustum. 
-                    Finally, the sampled points along the rays were visualized as a 3D point cloud. By combining these visualizations, I was able to 
-                    confirm that all components—rays, samples, and cameras—were working together as expected.
-                </p>
-            </div>
-
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part2_deliverable/2.3/viser_img.jpg" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-            
-        </section>
-
-        <section>
-            <h2>Part 2.4: Neural Radiance Field</h2>
-            <div class="text-box">
-                <p>
-                    For this step, I implemented another NeRF model to predict the density (sigma) and color of sampled points 
-                    in 3D space. The model extends the 2D implementation from earlier, incorporating 3D world coordinates and view directions as 
-                    inputs. These inputs are processed using positional encodings (PE) to capture high-frequency details, with separate encoding 
-                    layers for the spatial coordinates (L=10) and view directions (L=4).
-                    <br>
-                    <br>
-                    The network itself is an MLP with eight hidden layers of width 256, including a skip connection at 
-                    the fourth layer to reintroduce the original positional encodings. This trick ensures the model does not “forget” the input 
-                    features over the depth of the network. The output is divided into two branches: one predicts the density value (sigma), 
-                    constrained to non-negative values using ReLU, and the other predicts a 256-dimensional feature vector. This feature vector 
-                    is concatenated with the view direction encodings and passed through another smaller MLP to produce RGB colors in the range 
-                    [0, 1], using a Sigmoid activation function.
-                </p>
-            </div>
-            
-        </section>
-
-        <section>
-            <h2>Part 2.5: Volume Rendering</h2>
-            <div class="text-box">
-                <p>
-                    For the volume rendering implementation, I developed a function that computes the final rendered colors for a batch of rays 
-                    passing through a scene, based on the discrete approximation of the volume rendering equation. The function takes as input the 
-                    densities, colors, and the step size between sampled points along the rays, and it outputs the final colors 
-                    observed at each ray. This involves calculating weights for each sample along the ray, which are determined by the alpha 
-                    compositing values and accumulated transmittance, and blending these weighted colors with an optional background color.
-                    <br>
-                    <br>
-                    The core process involves three steps: computing alpha values from the density values, determining transmittance via 
-                    cumulative products of the (1-alpha) values, and using these to compute weights for each sample. These weights are 
-                    then applied to the colors predicted by the network to generate the final rendered image. An additional blending step incorporates
-                    the contribution of the background color based on the accumulated transmittance at the farthest sample.
-                    <br>
-                    <br>
-                    I extended this approach to create a rendering pipeline that visualizes novel-view animations. By sampling points along rays 
-                    from multiple test camera poses and passing them through the trained neural radiance field model, I rendered images frame by 
-                    frame. I then stitched these frames together into a smooth animation. For my bells and whistles requirement, I enabled the use of a
-                    customizable background color.
-                </p>
-            </div>
-
-            <h3>Visualization of Rays, Samples, & Cameras at a Training Step</h3>
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part2_deliverable/2.5/100_rays_visualization.png" alt="Image 1" style="width: 200;">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-            <h3>Views Across Epochs</h3>
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part2_deliverable/2.5/epoch_100.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part2_deliverable/2.5/epoch_500.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part2_deliverable/2.5/epoch_1000.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-            <div class="image-gallery">
-                <figure>
-                    <img src="../media/part2_deliverable/2.5/epoch_2000.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part2_deliverable/2.5/epoch_4000.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-                <figure>
-                    <img src="../media/part2_deliverable/2.5/epoch_5000.png" alt="Image 1">
-                    <figcaption></figcaption>
-                </figure>
-            </div>
-
-            <div class="image-gallery">
-                <figure>
-                    <video controls width="320">
-                        <source src="../media/part2_deliverable/2.5/background_regular.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </figure>
-                <figure>
-                    <video controls width="320">
-                        <source src="../media/part2_deliverable/2.5/background_colored.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <figcaption>Bells & Whistles: Different Background Color</figcaption>
-                </figure>
-            </div>
-            
-        </section>
-
+    <header>
+        <div style="font-weight:700;font-size:1.3rem;">Neural Radiance Fields</div>
+    </header>
+    <div class="hero">
+        <img src="../media/part2_deliverable/2.5/epoch_5000.png" alt="Neural Radiance Fields Main">
+        <div class="hero-title">
+            <h1>Neural Radiance Fields!</h1>
+            <p>This project explores NeRF implementation, 2D image fitting, and 3D scene reconstruction.</p>
+        </div>
     </div>
-    
+    <main>
+        <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
+        <div class="text-box">
+            <p>For this project, I implemented an Multi-layer Perceptron (MLP) to reconstruct a 2D image using a neural network. I started by 
+                building a positional encoding module, which transforms 2D image coordinates into a higher-dimensional representation using 
+                sinusoidal functions. This is essential for capturing fine details and patterns in the image. The MLP was designed with 
+                multiple hidden layers, activated by ReLU, and ending with a Sigmoid layer to predict RGB 
+                pixel values. The MLP takes the positional encodings as input and learns to map coordinates to their corresponding pixel colors.<br><br>
+                To train the model, I created a custom dataset class that samples a batch of random pixel coordinates and their respective RGB 
+                values at each iteration. For supervision, I normalized the pixel colors to the range [0, 1] and used Mean Squared Error (MSE) as the loss 
+                function. The Adam optimizer was used for training, and I tracked performance using PSNR curve. 
+                During training, I observed that the network progressively reconstructed the image as it optimized, confirming that the positional 
+                encoding and MLP were effective in learning the 2D neural representation.<br><br>
+                As for varying hyperparameters, I found that when I increased the learning rate from 1e-5 to 1e-2, the image reconstruction 
+                converged faster, and when I decreased the number of frequency levels from L=10 to L=5, the reconstruction took longer to reach
+                a certain PSNR.
+            </p>
+        </div>
+
+        <h3>Fox Image Progression</h3>
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_1.png" alt="Epoch 1">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_101.png" alt="Epoch 101">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_201.png" alt="Epoch 201">
+            </figure>
+        </div>
+
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_301.png" alt="Epoch 301">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_401.png" alt="Epoch 401">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_501.png" alt="Epoch 501">
+            </figure>
+        </div>
+
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_601.png" alt="Epoch 601">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_701.png" alt="Epoch 701">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_801.png" alt="Epoch 801">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/fox/epoch_901.png" alt="Epoch 901">
+            </figure>
+        </div>
+
+        <h3>Bird Image Progression</h3>
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_1.png" alt="Epoch 1">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_101.png" alt="Epoch 101">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_201.png" alt="Epoch 201">
+            </figure>
+        </div>
+
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_301.png" alt="Epoch 301">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_401.png" alt="Epoch 401">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_501.png" alt="Epoch 501">
+            </figure>
+        </div>
+
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_601.png" alt="Epoch 601">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_701.png" alt="Epoch 701">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_801.png" alt="Epoch 801">
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/epoch_901.png" alt="Epoch 901">
+            </figure>
+        </div>
+
+        <h3>PSNRS</h3>
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part1_deliverable/fox/psnr_fox.png" alt="Fox PSNR">
+                <figcaption>Fox PSNR</figcaption>
+            </figure>
+            <figure>
+                <img src="../media/part1_deliverable/bird/psnr_bird.png" alt="Bird PSNR">
+                <figcaption>Bird PSNR</figcaption>
+            </figure>
+        </div>
+
+        <h2>Part 2: Fit a Neural Radiance Field from Multi-view Images</h2>
+
+        <h2>Part 2.1: Create Rays From Cameras</h2>
+        <div class="text-box">
+            <p>For this task, I implemented functions to generate rays from cameras, which is important for 
+                implementing Neural Radiance Fields (NeRF). The process involves transforming points between the world space and the camera 
+                space, converting pixel coordinates into camera coordinates, and finally calculating ray origins and directions.<br><br>
+                First, I created the transform function, which transforms points from the camera space to the world space using a camera-to-world 
+                transformation matrix (c2w). This function supports batched inputs and ensures consistency by performing homogeneous 
+                transformations and converting back to Cartesian coordinates. Next, the pixel_to_camera function converts 2D pixel coordinates 
+                into 3D camera coordinates by applying the pinhole camera model using the intrinsic matrix K. This step allows us to project a 
+                pixel in image space into a 3D point along a ray in camera space, with a fixed depth s.<br><br>
+                Finally, the pixel_to_ray function computes the ray origins and directions for each pixel. The origin of each ray is simply the 
+                camera's position in world space, obtained by transforming the origin of the camera space (0, 0, 0). The ray direction is 
+                computed by projecting a pixel into the world space using the transform and pixel_to_camera functions, and then normalizing 
+                the vector pointing from the camera origin to this world-space point.
+            </p>
+        </div>
+
+        <h2>Part 2.2: Sampling</h2>
+
+        <h2>Part 2.2.1: Sampling Rays From Images</h2>
+        <div class="text-box">
+            <p>Here, I implemented the sample_random_rays function to randomly sample rays from multiple training images. The 
+                function selects N_rays rays by first sampling random image indices and then selecting random pixel coordinates (u, v) 
+                within each image. To ensure accurate ray computation, a 0.5 offset is added to the pixel coordinates to account for the
+                pixel center.<br><br>
+                Using the selected pixel coordinates and their corresponding camera-to-world transformation matrices (c2ws_train), the function 
+                computes the ray origins and directions with the pixel_to_ray function. It also retrieves the RGB color values of the sampled 
+                pixels from the training images. This approach efficiently generates ray data for training, allowing the model to optimize over 
+                rays sampled from the entire dataset of images.
+            </p>
+        </div>
+
+        <h2>Part 2.2.2: Sampling Points along Rays</h2>
+        <div class="text-box">
+            <p>To sample 3D points along rays, I implemented the sample_along_rays function. This function breaks each ray into N_samples 
+                uniformly spaced points between a near and far range (default near=2.0, far=6.0). Using torch.linspace, I generate the initial 
+                sample positions (t_vals) along each ray. To ensure all regions along the ray are visited during training, I introduce a small 
+                random perturbation to these sample positions by shifting them within their respective intervals.<br><br>
+                The 3D coordinates of the sampled points are computed using the ray origin (rays_o) and direction (rays_d). By combining the 
+                origins and directions with the perturbed t_vals, we create a set of 3D points that are distributed along each ray.
+            </p>
+        </div>
+
+        <h2>Part 2.3: Putting the Dataloading all Together</h2>
+        <div class="text-box">
+            <p>For this part, I defined a dataloader to enable sampling of rays from multi-view images, incorporating camera 
+                intrinsics and extrinsics. The dataloader randomly samples pixel coordinates from the training images and uses those coordinates 
+                to generate ray origins and directions in 3D space. This is done by converting 2D pixel coordinates into camera coordinates and 
+                then transforming them into world coordinates using the c2w matrix. The pixel colors corresponding to the sampled coordinates 
+                are also retrieved to serve as ground truth supervision during training.<br><br>
+                To verify my implementation, I used the viser library to visualize the rays, cameras, and sampled 3D points. 
+                First, I plotted the camera frustums for all training images, providing a clear view of their spatial layout. Then, I visualized 
+                the sampled rays originating from the cameras and extending into the scene, ensuring they remained within the camera frustum. 
+                Finally, the sampled points along the rays were visualized as a 3D point cloud. By combining these visualizations, I was able to 
+                confirm that all components—rays, samples, and cameras—were working together as expected.
+            </p>
+        </div>
+
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part2_deliverable/2.3/viser_img.jpg" alt="Viser Visualization">
+            </figure>
+        </div>
+
+        <h2>Part 2.4: Neural Radiance Field</h2>
+        <div class="text-box">
+            <p>For this step, I implemented another NeRF model to predict the density (sigma) and color of sampled points 
+                in 3D space. The model extends the 2D implementation from earlier, incorporating 3D world coordinates and view directions as 
+                inputs. These inputs are processed using positional encodings (PE) to capture high-frequency details, with separate encoding 
+                layers for the spatial coordinates (L=10) and view directions (L=4).<br><br>
+                The network itself is an MLP with eight hidden layers of width 256, including a skip connection at 
+                the fourth layer to reintroduce the original positional encodings. This trick ensures the model does not "forget" the input 
+                features over the depth of the network. The output is divided into two branches: one predicts the density value (sigma), 
+                constrained to non-negative values using ReLU, and the other predicts a 256-dimensional feature vector. This feature vector 
+                is concatenated with the view direction encodings and passed through another smaller MLP to produce RGB colors in the range 
+                [0, 1], using a Sigmoid activation function.
+            </p>
+        </div>
+
+        <h2>Part 2.5: Volume Rendering</h2>
+        <div class="text-box">
+            <p>For the volume rendering implementation, I developed a function that computes the final rendered colors for a batch of rays 
+                passing through a scene, based on the discrete approximation of the volume rendering equation. The function takes as input the 
+                densities, colors, and the step size between sampled points along the rays, and it outputs the final colors 
+                observed at each ray. This involves calculating weights for each sample along the ray, which are determined by the alpha 
+                compositing values and accumulated transmittance, and blending these weighted colors with an optional background color.<br><br>
+                The core process involves three steps: computing alpha values from the density values, determining transmittance via 
+                cumulative products of the (1-alpha) values, and using these to compute weights for each sample. These weights are 
+                then applied to the colors predicted by the network to generate the final rendered image. An additional blending step incorporates
+                the contribution of the background color based on the accumulated transmittance at the farthest sample.<br><br>
+                I extended this approach to create a rendering pipeline that visualizes novel-view animations. By sampling points along rays 
+                from multiple test camera poses and passing them through the trained neural radiance field model, I rendered images frame by 
+                frame. I then stitched these frames together into a smooth animation. For my bells and whistles requirement, I enabled the use of a
+                customizable background color.
+            </p>
+        </div>
+
+        <h3>Visualization of Rays, Samples, & Cameras at a Training Step</h3>
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part2_deliverable/2.5/100_rays_visualization.png" alt="100 Rays Visualization" style="width: 200;">
+            </figure>
+        </div>
+
+        <h3>Views Across Epochs</h3>
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part2_deliverable/2.5/epoch_100.png" alt="Epoch 100">
+            </figure>
+            <figure>
+                <img src="../media/part2_deliverable/2.5/epoch_500.png" alt="Epoch 500">
+            </figure>
+            <figure>
+                <img src="../media/part2_deliverable/2.5/epoch_1000.png" alt="Epoch 1000">
+            </figure>
+        </div>
+
+        <div class="image-gallery">
+            <figure>
+                <img src="../media/part2_deliverable/2.5/epoch_2000.png" alt="Epoch 2000">
+            </figure>
+            <figure>
+                <img src="../media/part2_deliverable/2.5/epoch_4000.png" alt="Epoch 4000">
+            </figure>
+            <figure>
+                <img src="../media/part2_deliverable/2.5/epoch_5000.png" alt="Epoch 5000">
+            </figure>
+        </div>
+
+        <div class="image-gallery">
+            <figure>
+                <video controls width="320">
+                    <source src="../media/part2_deliverable/2.5/background_regular.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </figure>
+            <figure>
+                <video controls width="320">
+                    <source src="../media/part2_deliverable/2.5/background_colored.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <figcaption>Bells & Whistles: Different Background Color</figcaption>
+            </figure>
+        </div>
+    </main>
 </body>
 </html>
